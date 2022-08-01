@@ -1,4 +1,5 @@
 from math import ceil
+from matplotlib.pyplot import grid
 import numpy as np,pygame
 
 CONNECT4_STYLE = 0
@@ -83,24 +84,86 @@ class GameBoard():
                 size = np.array((self.lastDrawSize,self.lastDrawSize * (len(self.grid[0])/len(self.grid[1]))) )
                 corner = self.lastDrawPos - self.lastDrawSize/2
                 #check if and which column is the player's cursor is selecting
-                #this is determined by checkin if the player's curson is within a circle above the board
+                #this is determined by checkin if the player's cursor is within a circle above the board
                 for x in range(0,len(self.grid)):
                     cellPos = corner + size[0]*np.array(((x+0.5)/len(self.grid),(-1+0.5)/len(self.grid[1])))
-                    if (np.linalg.norm(mousePos-cellPos) < pieceRadius):
+                    if (np.linalg.norm(mousePos-cellPos) < pieceRadius and self.moveLegal(x=x)):
                         pygame.draw.circle(self.lastDrawSurface,(255,0,0),cellPos,pieceRadius)
                         targetColumn = x
                         break
 
                 if (targetColumn == -1):
-                    pygame.draw.circle(self.lastDrawSurface,(0,0,0),mousePos,pieceRadius,ceil(pieceRadius*0.05))
+                    pass
+                    #pygame.draw.circle(self.lastDrawSurface,(0,0,0),mousePos,pieceRadius,ceil(pieceRadius*0.05))
                 else:
-                    if (mouseClick[0]==1):
+                    if (mouseClick[0]==1 and self.moveLegal(x=targetColumn)):
                         self.gameInput(1,x=targetColumn)
+                        return True
+            if (self.style == TICTACTOE_STYLE):
+
+                
+                targetCell = (-1,-1)
+
+                size = np.array((self.lastDrawSize[0],self.lastDrawSize[1] * (len(self.grid[0])/len(self.grid[1]))) )
+                corner = self.lastDrawPos - self.lastDrawSize/2
+                #check if and which column is the player's cursor is selecting
+                #this is determined by checkin if the player's cursor is inside a gridCell
+                for x in range(0,len(self.grid)):
+                    for y in range(0,len(self.grid[x])):
+                        cellPos = corner + size[0]*np.array(((x)/len(self.grid),(y)/len(self.grid[1])))
+                        #basic AABB check
+                        localCursorPos = (mousePos-cellPos)
+                        if (
+                            localCursorPos[0] > 0 and 
+                            localCursorPos[1] > 0 and 
+                            localCursorPos[0] < size[0]/len(self.grid) and 
+                            localCursorPos[1] < size[1]/len(self.grid[0]) and 
+                            self.moveLegal(x=x,y=y)):
+                            pygame.draw.circle(self.lastDrawSurface,(124,124,255),
+                            corner + size*np.array(((x+0.5)/len(self.grid),(y+0.5)/len(self.grid[1]))),
+                            int((size[0]/len(self.grid)) * 0.4),int(size[0]/len(self.grid[0])*0.1))
+                            targetCell = (x,y)
+                            break
+
+                if (targetCell == (-1,-1)):
+                    pass
+                    #pygame.draw.circle(self.lastDrawSurface,(0,0,0),mousePos,
+                    #int((size[0]/len(self.grid)) * 0.4),
+                    #ceil(size[0]/len(self.grid)* 0.1))
+                else:
+                    if (mouseClick[0]==1 and self.moveLegal(x=targetCell[0],y=targetCell[1])):
+                        self.gameInput(2,x=targetCell[0],y=targetCell[1])
                         return True
 
         #return weather the gamestate has advanced
         return False
+    def moveLegal(self,**kwargs):
+        if (self.style == CONNECT4_STYLE):
+            x = None
+            for arg,value in kwargs.items():
+                if (arg == "x"):
+                    x = value
+            if (x == None or self.grid[x][0] != 0):
+                return False
 
+            return True
+            
+        if (self.style == TICTACTOE_STYLE):
+            x = None
+            y = None
+            for arg,value in kwargs.items():
+
+                if (arg == "x"):
+                    x = value
+                if (arg == "y"):
+                    y = value
+
+            if (x == None or y == None or self.grid[x][y] != 0):
+                return False
+            
+            return True
+            
+        return False
     def gameInput(self,team,**kwargs):
         
         if (self.style == CONNECT4_STYLE):
