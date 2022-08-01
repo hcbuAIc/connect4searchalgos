@@ -1,3 +1,4 @@
+from math import ceil
 import numpy as np,pygame
 
 CONNECT4_STYLE = 0
@@ -7,12 +8,19 @@ class GameBoard():
     def __init__(self,dimensions,style):
 
         self.grid = []
+        self.lastDrawPos = None
+        self.lastDrawSurface = None
+        self.lastDrawSize = None
         for y in range(dimensions[0]):
             self.grid.append([])
             for x in range(dimensions[1]):
                 self.grid[-1].append(0)
         self.style = style
     def draw(self,surface,position,size):
+
+        self.lastDrawPos = position
+        self.lastDrawSurface = surface
+        self.lastDrawSize = np.array((size,size * (len(self.grid[0])/len(self.grid[1]))) )
 
         size = np.array((size,size * (len(self.grid[0])/len(self.grid[1]))) )
         
@@ -36,6 +44,7 @@ class GameBoard():
                     int((size[0]/len(self.grid)) * 0.4) )
 
         if (self.style == TICTACTOE_STYLE):
+            
             
             pygame.draw.rect(surface,(255,255,255),(corner[0],corner[1],size[0],size[1]))
             
@@ -62,9 +71,35 @@ class GameBoard():
                         pygame.draw.circle(surface,(0,0,255),
                         corner + size*np.array(((x+0.5)/len(self.grid),(y+0.5)/len(self.grid[1]))),
                         int((size[0]/len(self.grid)) * 0.4),int(size[0]/len(self.grid[0])*0.1))
+    def gamePlayerInput(self,mousePos,mouseClick):
+        
+        if (self.lastDrawSurface != None):
+            
+            if (self.style == CONNECT4_STYLE):
 
+                pieceRadius = int((self.lastDrawSize[0]/len(self.grid[0])) * 0.4)
+                targetColumn = -1
 
+                size = np.array((self.lastDrawSize,self.lastDrawSize * (len(self.grid[0])/len(self.grid[1]))) )
+                corner = self.lastDrawPos - self.lastDrawSize/2
+                #check if and which column is the player's cursor is selecting
+                #this is determined by checkin if the player's curson is within a circle above the board
+                for x in range(0,len(self.grid)):
+                    cellPos = corner + size[0]*np.array(((x+0.5)/len(self.grid),(-1+0.5)/len(self.grid[1])))
+                    if (np.linalg.norm(mousePos-cellPos) < pieceRadius):
+                        pygame.draw.circle(self.lastDrawSurface,(255,0,0),cellPos,pieceRadius)
+                        targetColumn = x
+                        break
 
+                if (targetColumn == -1):
+                    pygame.draw.circle(self.lastDrawSurface,(0,0,0),mousePos,pieceRadius,ceil(pieceRadius*0.05))
+                else:
+                    if (mouseClick[0]==1):
+                        self.gameInput(1,x=targetColumn)
+                        return True
+
+        #return weather the gamestate has advanced
+        return False
 
     def gameInput(self,team,**kwargs):
         

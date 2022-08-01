@@ -31,13 +31,20 @@ while (len(fifo) > 0):
 
 
 run = True
+
+isPlayerTurn = True
+
 while run:
 
     screen.fill((255,255,255))
-
+    mousePos = np.array(pygame.mouse.get_pos())
     connect4.draw(screen,np.array((SIZE[0]/4,SIZE[1]/2)),SIZE[0]*1/3)
-    tictactoe.draw(screen,np.array((SIZE[0]/4 * 3,SIZE[1]/2)),SIZE[0]*1/3)
-    tree.drawTree(screen,root,SIZE/2 - np.array((0,SIZE[1]/3)),2,32,0)
+    if (isPlayerTurn):
+        madeMove=connect4.gamePlayerInput(mousePos,pygame.mouse.get_pressed())
+        isPlayerTurn = isPlayerTurn and not madeMove
+
+    #tictactoe.draw(screen,np.array((SIZE[0]/4 * 3,SIZE[1]/2)),SIZE[0]*1/3)
+    #tree.drawTree(screen,root,SIZE/2 - np.array((0,SIZE[1]/3)),2,32,0)
 
     #render drawn shapes
     pygame.display.update()
