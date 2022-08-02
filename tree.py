@@ -45,7 +45,16 @@ def drawTree(surface,root,position,nodeRadius,edgeLength,offset):
             pos = fifo[0][1] + np.array((offset,edgeLength))
             direction = (fifo[0][1]-pos)/np.linalg.norm(pos-fifo[0][1])
             pygame.draw.line(surface,(0,0,0),pos+direction*nodeRadius,fifo[0][1]-direction*nodeRadius,1)
-            pygame.draw.circle(surface,(0,0,0),pos,nodeRadius,1)
+            if (child.cost == None):
+                pygame.draw.circle(surface,(0,0,0),pos,nodeRadius,1)
+            else:
+                
+                color = np.array((255,0,0))*abs(child.cost/4)
+
+                if (child.cost < 0):
+                    color = np.array((0,0,255))*abs(child.cost/4)
+
+                pygame.draw.circle(surface,color,pos,nodeRadius)
             fifo.append([child,pos])
             count += 1
         fifo.pop(0)

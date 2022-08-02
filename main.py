@@ -39,7 +39,7 @@ unclick = 0
 
 
 jerryDaniels = SearchAgent.searchAgent(connect4)
-jerryDaniels.constructMoveTree()
+jerryDaniels.constructMinimaxMoveTree()
 while run:
 
     screen.fill((255,255,255))
@@ -55,7 +55,7 @@ while run:
         #isPlayerTurn2 = isPlayerTurn2 and not madeMove
 
     unclick = pygame.mouse.get_pressed()[0] == 0
-    tree.drawTree(screen,jerryDaniels.possibilities,SIZE/2 - np.array((0,(5/6*SIZE[1])/2)),2,32,0)
+    tree.drawTree(screen,jerryDaniels.possibilities,SIZE/2 - np.array((0,(5/6*SIZE[1])/2)),4,32,0)
 
     #render drawn shapes
     pygame.display.update()

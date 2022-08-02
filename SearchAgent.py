@@ -1,4 +1,6 @@
 from re import S
+
+from numpy import sign
 import gameboard,tree
 
 #necesary because python decides that any list being copied will always be a pointer
@@ -11,6 +13,8 @@ def copyGrid(A):
             out[-1].append(A[x][y])
     return out
 
+
+
 class searchAgent():
 
     def __init__(self,gameboard):
@@ -21,40 +25,54 @@ class searchAgent():
         self.possibilities = None
         self.team = 2
 
-    def constructMoveTree(self):
+
+    def constructMinimaxMoveTree(self):
         
-        searchDepth = 5
+        searchDepth = 2
         self.possibilities = tree.node((copyGrid(self.environment.grid),(-1,-1)),1,None)
         fifo = [self.possibilities]
+       
+        #tree construction
         while (len(fifo) > 0):
             current = fifo[0]
             #print(current.cost)
             if (current.depth < searchDepth):
+                
+                #0 means the agent choses
+                #1 means the player choses
+                turn = current.depth % 2
+                
                 for i in range(0,len(self.environment.grid)):
                     grid = copyGrid(current.value[0])
                     if (self.environment.moveLegal(x=i,grid=grid)):
                         
-                        
                         cell = [i,0]
 
-                        for y in range(0,len(grid[0])):
-                            if (y+1 == len(grid[0])):
-                                cell[1] = y
+                        for i in range(len(grid[0])):
+                            cell[1] = i
+                            if (grid[0][i] != 0):
+                                cell[1]-=1
                                 break
-                            if (grid[cell[0]][y+1] != 0):
-                                cell[1] = y
-                                break
-                            
 
-                        grid[cell[0]][cell[1]] = self.team
+                        #child's value is a grid and the column the last move was made at
+                        #sign(turn-0.5) makes the costs positive or negative based on whose turn it is
+                        cost = self.evaluateConnect4(cell,current.value[0],turn+1) * sign(turn-0.5)
+                        current.addChild((grid,i),cost)
 
-                        current.addChild((grid,cell),self.evaluateConnect4(cell,current.value[0],self.team))
-                        fifo.append(current.children[-1])
+                    
+                for child in current.children:
+                    fifo.append(child)
+
             fifo.pop(0)
+       
+        
 
     def evaluateConnect4(self,cell,grid,team):
 
         value = 0
+
+        
+
 
         #checking for verical lines
 
@@ -67,7 +85,7 @@ class searchAgent():
             else:
                 lineLength += 1
 
-        value += 3**lineLength
+        value += lineLength
 
         lineLength = 1
         for x in range(cell[0]+1,len(grid)):
@@ -86,7 +104,7 @@ class searchAgent():
             else:
                 lineLength += 1
 
-        value += 3**lineLength
+        value += lineLength
 
         return value
                 
