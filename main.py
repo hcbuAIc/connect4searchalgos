@@ -1,4 +1,4 @@
-import pygame,random,numpy as np,gameboard,tree
+import pygame,random,numpy as np,gameboard,tree,SearchAgent
 
 #change this if you want to increase the screen's resolution
 SIZE = np.array((800,880))
@@ -17,8 +17,8 @@ tictactoe.gameInput(1,x=1,y=0)
 
 root = tree.node(0,1,None)
 maxDepth = 4
-minChildren = 2
-maxChildren = 3
+minChildren = 1
+maxChildren = 4
 fifo = [root]
 while (len(fifo) > 0):
     current = fifo[0]
@@ -37,6 +37,9 @@ isPlayerTurn2 = True
 
 unclick = 0
 
+
+jerryDaniels = SearchAgent.searchAgent(connect4)
+jerryDaniels.constructMoveTree()
 while run:
 
     screen.fill((255,255,255))
@@ -52,7 +55,7 @@ while run:
         #isPlayerTurn2 = isPlayerTurn2 and not madeMove
 
     unclick = pygame.mouse.get_pressed()[0] == 0
-    tree.drawTree(screen,root,SIZE/2 - np.array((0,(5/6*SIZE[1])/2)),2,32,0)
+    tree.drawTree(screen,jerryDaniels.possibilities,SIZE/2 - np.array((0,(5/6*SIZE[1])/2)),2,32,0)
 
     #render drawn shapes
     pygame.display.update()
