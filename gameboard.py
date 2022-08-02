@@ -138,12 +138,17 @@ class GameBoard():
         #return weather the gamestate has advanced
         return False
     def moveLegal(self,**kwargs):
+
+        grid = self.grid
+        for arg,value in kwargs.items():
+            if (arg == "grid"):
+                grid = value
         if (self.style == CONNECT4_STYLE):
             x = None
             for arg,value in kwargs.items():
                 if (arg == "x"):
                     x = value
-            if (x == None or self.grid[x][0] != 0):
+            if (x == None or grid[x][0] != 0):
                 return False
 
             return True
@@ -158,7 +163,7 @@ class GameBoard():
                 if (arg == "y"):
                     y = value
 
-            if (x == None or y == None or self.grid[x][y] != 0):
+            if (x == None or y == None or grid[x][y] != 0):
                 return False
             
             return True
