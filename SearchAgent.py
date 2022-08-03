@@ -28,7 +28,7 @@ class searchAgent():
 
     def constructMinimaxMoveTree(self):
         
-        searchDepth = 2
+        searchDepth = 3
         self.possibilities = tree.node((copyGrid(self.environment.grid),(-1,-1)),1,None)
         fifo = [self.possibilities]
        
@@ -54,9 +54,7 @@ class searchAgent():
                                 cell[1]-=1
                                 break
 
-                        #child's value is a grid and the column the last move was made at
-                        #sign(turn-0.5) makes the costs positive or negative based on whose turn it is
-                        cost = self.evaluateConnect4(cell,current.value[0],turn+1) * sign(turn-0.5)
+                        cost = self.evaluateConnect4(current.value[0]) * sign(turn-0.5)
                         current.addChild((grid,i),cost)
 
                     
@@ -65,46 +63,53 @@ class searchAgent():
 
             fifo.pop(0)
        
+    def evaluateCell(self,cell,grid,team):
+        
+        score = 0
+        
+        gridSizeX = len(grid)
+        gridSizeY = len(grid[0])
+        slopes = ((1,0),(-1,0),(0,1),(0,-1),(1,1),(-1,1),(-1,-1),(1,-1))
+
+        for slope in slopes:
+            lineLength = 1
+            pieceLine = 1
+            x = cell[0]
+            y = cell[1]
+            for i in range(0,4):
+                x += slope[0]
+                y += slope[1]
+                if (x<gridSizeX and y < gridSizeY and x >= 0 and y >= 0):
+                    if (grid[x][y] != 0 and grid[x][y] != team):
+                        break
+                    if (grid[x][y] == team):
+                        pieceLine += 1
+                    lineLength += 1
+                else:
+                    break
+            if (lineLength >= 4):
+                score+=1
+            if (pieceLine >= 4):
+                return 65536
+                
+
+        return score
+
         
 
-    def evaluateConnect4(self,cell,grid,team):
+    def evaluateConnect4(self,grid):
 
         value = 0
 
-        
-
-
-        #checking for verical lines
-
-        lineLength = 1
-        for y in range(cell[1],len(grid[cell[0]])):
-            if (y+1 >= len(grid[0])):
-                break
-            if (grid[cell[0]][y] != team):
-                break
-            else:
-                lineLength += 1
-
-        value += lineLength
-
-        lineLength = 1
-        for x in range(cell[0]+1,len(grid)):
-            if (x+1 >= len(grid)):
-                break
-            if (grid[x][cell[1]] != team):
-                break
-            else:
-                lineLength += 1
-        
-        for x in range(cell[0]-1,0,1):
-            if (x-1 < 0):
-                break
-            if (grid[x][cell[1]] != team):
-                break
-            else:
-                lineLength += 1
-
-        value += lineLength
+        for x in range(len(grid)):
+            for y in range(len(grid[0])):
+                team = grid[x][y]
+                if (team == 1):
+                    #player's piece
+                    value -= self.evaluateCell((x,y),grid,team)
+                if (team == 2):
+                    #agent's piece
+                    value += self.evaluateCell((x,y),grid,team)
 
         return value
                 

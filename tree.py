@@ -1,5 +1,12 @@
 from tracemalloc import start
 import pygame,numpy as np
+
+def clamp(a,b,c):
+    if (a < b):
+        return b
+    if (a > c):
+        return c
+    return a
 class node():
 
     def __init__(self,value,cost,parent):
@@ -49,10 +56,8 @@ def drawTree(surface,root,position,nodeRadius,edgeLength,offset):
                 pygame.draw.circle(surface,(0,0,0),pos,nodeRadius,1)
             else:
                 
-                color = np.array((255,0,0))*abs(child.cost/4)
+                color = np.array((255,0,0))*clamp(child.cost/10,0,1) + np.array((0,0,255))*clamp(-child.cost/10,0,1)
 
-                if (child.cost < 0):
-                    color = np.array((0,0,255))*abs(child.cost/4)
 
                 pygame.draw.circle(surface,color,pos,nodeRadius)
             fifo.append([child,pos])

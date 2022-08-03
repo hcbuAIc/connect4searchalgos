@@ -5,10 +5,11 @@ SIZE = np.array((800,880))
 screen = pygame.display.set_mode(SIZE)
 
 connect4 = gameboard.GameBoard(np.array((7,6)),gameboard.CONNECT4_STYLE)
-connect4.gameInput(1,x=0)
-connect4.gameInput(2,x=0)
-connect4.gameInput(1,x=1)
-connect4.gameInput(2,x=1)
+
+for i in range(10):
+    connect4.gameInput(1,x=random.randint(0,6))
+    connect4.gameInput(2,x=random.randint(0,6))
+
 
 
 tictactoe = gameboard.GameBoard(np.array((3,3)),gameboard.TICTACTOE_STYLE)
