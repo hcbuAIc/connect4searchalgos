@@ -71,7 +71,6 @@ class searchAgent():
 
         value = 0
 
-        
 
 
         #checking for verical lines
