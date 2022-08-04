@@ -143,6 +143,7 @@ class GameBoard():
         for arg,value in kwargs.items():
             if (arg == "grid"):
                 grid = value
+                
         if (self.style == CONNECT4_STYLE):
             x = None
             for arg,value in kwargs.items():
