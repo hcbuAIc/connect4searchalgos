@@ -13,6 +13,36 @@ def copyGrid(A):
             out[-1].append(A[x][y])
     return out
 
+def propagateCost(tree):
+
+    
+    if (len(tree.children)>0):
+
+        #0 is player's turn (negative score better)
+        #1 is agent's turn (positive score better)
+        turn = tree.depth+1%2
+        if (turn == 1):
+            best = -10000000
+        else:
+            best = 10000000
+        
+        for child in tree.children:
+            childCost = propagateCost(child)
+            
+            if (turn == 1):
+                if (childCost > best):
+                    best = childCost
+            else:
+                if (childCost < best):
+                    best = childCost
+
+        tree.cost = best
+
+
+
+    return tree.cost
+    
+
 
 
 class searchAgent():
@@ -25,10 +55,25 @@ class searchAgent():
         self.possibilities = None
         self.team = 2
 
+    def makeMove(self):
+        if (self.possibilities != None):
+            best = -1000000
+            bestColumn = 0
+            
+            for child in self.possibilities.children:
+
+                if (child.cost > best):
+                    best = child.cost
+                    bestColumn = child.value[1]
+                    
+           
+            
+            self.environment.gameInput(2,x=bestColumn)
+
 
     def constructMinimaxMoveTree(self):
         
-        searchDepth = 3
+        searchDepth = 4
         self.possibilities = tree.node((copyGrid(self.environment.grid),(-1,-1)),1,None)
         fifo = [self.possibilities]
        
@@ -38,9 +83,9 @@ class searchAgent():
             #print(current.cost)
             if (current.depth < searchDepth):
                 
-                #0 means the agent choses
-                #1 means the player choses
-                turn = current.depth % 2
+                #0 means the player choses
+                #1 means the agent choses
+                turn = (current.depth+1) % 2
                 
                 for i in range(0,len(self.environment.grid)):
                     grid = copyGrid(current.value[0])
@@ -48,13 +93,16 @@ class searchAgent():
                         
                         cell = [i,0]
 
-                        for i in range(len(grid[0])):
-                            cell[1] = i
-                            if (grid[0][i] != 0):
+                        for x in range(len(grid[0])):
+                            cell[1] = x
+                            if (grid[0][x] != 0):
                                 cell[1]-=1
                                 break
 
-                        cost = self.evaluateConnect4(current.value[0]) * sign(turn-0.5)
+                        grid[cell[0]][cell[1]] = turn+1
+                        cost = None
+                        if (current.depth == searchDepth-1):
+                            cost = self.evaluateConnect4(current.value[0])
                         current.addChild((grid,i),cost)
 
                     
@@ -62,6 +110,8 @@ class searchAgent():
                     fifo.append(child)
 
             fifo.pop(0)
+            
+        propagateCost(self.possibilities)
        
     def evaluateCell(self,cell,grid,team):
         
@@ -76,7 +126,7 @@ class searchAgent():
             pieceLine = 1
             x = cell[0]
             y = cell[1]
-            for i in range(0,4):
+            for i in range(0,3):
                 x += slope[0]
                 y += slope[1]
                 if (x<gridSizeX and y < gridSizeY and x >= 0 and y >= 0):
@@ -87,6 +137,7 @@ class searchAgent():
                     lineLength += 1
                 else:
                     break
+         
             if (lineLength >= 4):
                 score+=1
             if (pieceLine >= 4):
@@ -94,8 +145,6 @@ class searchAgent():
                 
 
         return score
-
-        
 
     def evaluateConnect4(self,grid):
 
@@ -110,7 +159,7 @@ class searchAgent():
                 if (team == 2):
                     #agent's piece
                     value += self.evaluateCell((x,y),grid,team)
-
+        
         return value
                 
     

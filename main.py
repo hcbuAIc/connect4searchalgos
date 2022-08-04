@@ -1,12 +1,12 @@
 import pygame,random,numpy as np,gameboard,tree,SearchAgent
 
 #change this if you want to increase the screen's resolution
-SIZE = np.array((800,880))
+SIZE = np.array((1200,980))
 screen = pygame.display.set_mode(SIZE)
 
 connect4 = gameboard.GameBoard(np.array((7,6)),gameboard.CONNECT4_STYLE)
 
-for i in range(10):
+for i in range(0):
     connect4.gameInput(1,x=random.randint(0,6))
     connect4.gameInput(2,x=random.randint(0,6))
 
@@ -41,6 +41,7 @@ unclick = 0
 
 jerryDaniels = SearchAgent.searchAgent(connect4)
 jerryDaniels.constructMinimaxMoveTree()
+
 while run:
 
     screen.fill((255,255,255))
@@ -50,13 +51,17 @@ while run:
     
     if (isPlayerTurn and unclick):
         madeMove=connect4.gamePlayerInput(mousePos,pygame.mouse.get_pressed())
+        if (madeMove):
+            jerryDaniels.constructMinimaxMoveTree()
+            jerryDaniels.makeMove()
         #isPlayerTurn = isPlayerTurn and not madeMove
     if (isPlayerTurn2 and unclick):
         madeMove=tictactoe.gamePlayerInput(mousePos,pygame.mouse.get_pressed())
+        
         #isPlayerTurn2 = isPlayerTurn2 and not madeMove
 
     unclick = pygame.mouse.get_pressed()[0] == 0
-    tree.drawTree(screen,jerryDaniels.possibilities,SIZE/2 - np.array((0,(5/6*SIZE[1])/2)),4,32,0)
+    tree.drawTree(screen,jerryDaniels.possibilities,SIZE/2 - np.array((0,(5/6*SIZE[1])/2)),1.5,32,0)
 
     #render drawn shapes
     pygame.display.update()
