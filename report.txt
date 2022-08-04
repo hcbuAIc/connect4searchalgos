@@ -1,0 +1,2 @@
+1. Using the minimax search algorithm, we are trying to build a search agent capable of playing Connect Four and Tic-Tac-Toe. 
+2. 
