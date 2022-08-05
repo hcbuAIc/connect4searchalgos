@@ -1,2 +1,9 @@
-1. Using the minimax search algorithm, we are trying to build a search agent capable of playing Connect Four and Tic-Tac-Toe. 
-2. 
+1. Using the minimax search algorithm, our goal was to build a search agent capable of playing Connect Four and Tic-Tac-Toe. 
+
+2. As stated in the last prompt, we decided to impliment the minimax search algorithm because of the on-paper ease of writing it
+in python. Another major change we made was writing our own connect four and tic-tac-toe game board, allowing us to write the search
+algorithms easily. The system was tested using a simply trial and error approach whenever bugs appeared in the project.
+
+3. As seen by the displayed tree on the game board, it has been implimented.
+
+4. 
