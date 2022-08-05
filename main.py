@@ -42,26 +42,31 @@ unclick = 0
 jerryDaniels = SearchAgent.searchAgent(connect4)
 jerryDaniels.constructMinimaxMoveTree()
 
+treeSurf = pygame.surface.Surface(SIZE)
+treeSurf.fill((255,255,255))
 while run:
 
     screen.fill((255,255,255))
+    screen.blit(treeSurf,(0,0))
     mousePos = np.array(pygame.mouse.get_pos())
-    connect4.draw(screen,np.array((SIZE[0]/4,SIZE[1]/2)),SIZE[0]*1/3)
-    tictactoe.draw(screen,np.array((SIZE[0]/4 * 3,SIZE[1]/2)),SIZE[0]*1/3)
+    connect4.draw(screen,np.array((SIZE[0]/2,SIZE[1]*2.6/4)),SIZE[0]*1/2)
+    #tictactoe.draw(screen,np.array((SIZE[0]/4 * 3,SIZE[1]/2)),SIZE[0]*1/3)
     
     if (isPlayerTurn and unclick):
         madeMove=connect4.gamePlayerInput(mousePos,pygame.mouse.get_pressed())
         if (madeMove):
             jerryDaniels.constructMinimaxMoveTree()
             jerryDaniels.makeMove()
-        #isPlayerTurn = isPlayerTurn and not madeMove
-    if (isPlayerTurn2 and unclick):
-        madeMove=tictactoe.gamePlayerInput(mousePos,pygame.mouse.get_pressed())
+            treeSurf.fill((255,255,255))
+            tree.drawTree(treeSurf,jerryDaniels.possibilities,SIZE/2 - np.array((0,(5/6*SIZE[1])/2)),1.5,32,0)
+       
+    #if (isPlayerTurn2 and unclick):
+    #    madeMove=tictactoe.gamePlayerInput(mousePos,pygame.mouse.get_pressed())
         
-        #isPlayerTurn2 = isPlayerTurn2 and not madeMove
-
+        
+    
     unclick = pygame.mouse.get_pressed()[0] == 0
-    tree.drawTree(screen,jerryDaniels.possibilities,SIZE/2 - np.array((0,(5/6*SIZE[1])/2)),1.5,32,0)
+    
 
     #render drawn shapes
     pygame.display.update()

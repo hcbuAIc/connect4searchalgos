@@ -35,15 +35,19 @@ def drawTree(surface,root,position,nodeRadius,edgeLength,offset):
 
     tree = []
     fifo = [[root,position]]
-
+    maxNodes = 1000
+    numNodes = 0
     pygame.draw.circle(surface,(0,0,0),position + np.array((0,0)),nodeRadius,1)
 
-    while len(fifo) > 0:
+    while len(fifo) > 0 and numNodes < maxNodes:
         current = fifo[0][0]
         count = 0
+        numNodes+=1
+
 
         for child in current.children:
             offset = 0
+            
             if (len(current.children) > 1):
                 offset = ((count/(len(current.children)-1)) - 0.5) * nodeRadius * 3
                 offset += np.sign(((count/(len(current.children)-1)) - 0.5)) * (current.numTotalOffspring+child.numTotalOffspring) * 2 * nodeRadius * abs((count/(len(current.children)-1)) - 0.5)
@@ -56,8 +60,8 @@ def drawTree(surface,root,position,nodeRadius,edgeLength,offset):
                 pygame.draw.circle(surface,(0,0,0),pos,nodeRadius+2,1)
             else:
                 
-                color = np.array((255,255,0))*clamp(child.cost/3,0,1) + np.array((255,0,0))*clamp(-child.cost/3,0,1)
-
+                color = np.array((255,255,0))*clamp(child.cost/25,0,1) + np.array((255,0,0))*clamp(-child.cost/25,0,1)
+                #color = np.array((255,255,0))*clamp(child.depth%2,0,1) + np.array((255,0,0))*clamp((child.depth+1)%2,0,1)
                 pygame.draw.circle(surface,(0,0,0),pos,nodeRadius+2,1)
                 pygame.draw.circle(surface,color,pos,nodeRadius+1)
                 

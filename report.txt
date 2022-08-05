@@ -1,9 +1,14 @@
-1. Using the minimax search algorithm, our goal was to build a search agent capable of playing Connect Four and Tic-Tac-Toe. 
+introduction. Using the minimax search algorithm, our goal was to build a search agent capable of playing Connect Four and Tic-Tac-Toe. 
 
-2. As stated in the last prompt, we decided to impliment the minimax search algorithm because of the on-paper ease of writing it
+methods. As stated in the last prompt, we decided to impliment the minimax search algorithm because of the on-paper ease of writing it
 in python. Another major change we made was writing our own connect four and tic-tac-toe game board, allowing us to write the search
 algorithms easily. The system was tested using a simply trial and error approach whenever bugs appeared in the project.
 
-3. As seen by the displayed tree on the game board, it has been implimented.
+results. As seen by the displayed tree on the game board, connect4 has been implemented. we did not finish working out the bugs with our implementation of minimax. the agent is capable of 
+playing. however the agent choses the wrong branches to traverse. this is an issue with our method of scoring however the deadline has arrived before we could fix it
 
-4. 
+
+discussion. 
+our methods were mostly sufficient for the task. the ability to visualize the agent's search tree helped greatly with debugging. if we had more time we would definately work some bugs relating to the propagation of the 
+leaf node's score up the tree. the agent is doesn't block the player from making winning moves. this shouldn't happen if minimax is implemented correctly so it is definately
+an issue with the implementation.

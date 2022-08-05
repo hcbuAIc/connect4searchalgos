@@ -18,10 +18,10 @@ def propagateCost(tree):
     
     if (len(tree.children)>0):
 
-        #0 is player's turn (negative score better)
-        #1 is agent's turn (positive score better)
-        turn = tree.depth+1%2
-        if (turn == 1):
+        #1 is player's turn (negative score better)
+        #0 is agent's turn (positive score better)
+        turn = (tree.depth+1)%2
+        if (turn == 0):
             best = -10000000
         else:
             best = 10000000
@@ -29,7 +29,7 @@ def propagateCost(tree):
         for child in tree.children:
             childCost = propagateCost(child)
             
-            if (turn == 1):
+            if (turn == 0):
                 if (childCost > best):
                     best = childCost
             else:
@@ -73,6 +73,7 @@ class searchAgent():
 
     def constructMinimaxMoveTree(self):
         
+        
         searchDepth = 4
         self.possibilities = tree.node((copyGrid(self.environment.grid),(-1,-1)),1,None)
         fifo = [self.possibilities]
@@ -83,8 +84,8 @@ class searchAgent():
             #print(current.cost)
             if (current.depth < searchDepth):
                 
-                #0 means the player choses
-                #1 means the agent choses
+                #1 means the player choses
+                #0 means the agent choses
                 turn = (current.depth+1) % 2
                 
                 for i in range(0,len(self.environment.grid)):
@@ -98,8 +99,8 @@ class searchAgent():
                             if (grid[0][x] != 0):
                                 cell[1]-=1
                                 break
-
-                        grid[cell[0]][cell[1]] = turn+1
+                        teams = [2,1]
+                        grid[cell[0]][cell[1]] = teams[turn]
                         cost = None
                         if (current.depth == searchDepth-1):
                             cost = self.evaluateConnect4(current.value[0])
@@ -112,7 +113,7 @@ class searchAgent():
             fifo.pop(0)
             
         propagateCost(self.possibilities)
-       
+    
     def evaluateCell(self,cell,grid,team):
         
         score = 0
@@ -137,10 +138,12 @@ class searchAgent():
                     lineLength += 1
                 else:
                     break
-         
+            
+            score += pieceLine
             if (lineLength >= 4):
                 score+=1
-            if (pieceLine >= 4):
+                pass
+            if (pieceLine >= 3):
                 return 65536
                 
 
@@ -161,7 +164,7 @@ class searchAgent():
                     value += self.evaluateCell((x,y),grid,team)
         
         return value
-                
+
     
 
     

@@ -1,5 +1,4 @@
 from math import ceil
-from matplotlib.pyplot import grid
 import numpy as np,pygame
 
 CONNECT4_STYLE = 0
